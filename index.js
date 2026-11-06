@@ -26,12 +26,16 @@ const DEFAULTS = {
     showButton: true,
     showQuickReplies: true,
     clearAfterSend: true,
+    openOnRegenerate: true,
 };
 
 const state = {
     settings: { ...DEFAULTS },
     generating: false,
     injected: false,
+    regenHookInstalled: false,
+    regenBypass: false,
+    allowSyntheticIntercept: false,
     toasts: new WeakSet(),
 };
 
@@ -307,6 +311,17 @@ function triggerRegenerate(feedback) {
         return;
     }
 
+    // 下面会程序化点一次菜单项，期间把拦截关掉，避免自己拦自己。
+    const prev = state.regenBypass;
+    state.regenBypass = true;
+    try {
+        runRegenerate(feedback);
+    } finally {
+        state.regenBypass = prev;
+    }
+}
+
+function runRegenerate(feedback) {
     const ctx = getCtx();
     const isGroup = Boolean(ctx?.groupId);
     const regenEl = document.getElementById('option_regenerate');
@@ -353,6 +368,54 @@ function clearInjection() {
 }
 
 /* ------------------------------------------------------------------ */
+/* 拦截原生「重新生成」                                                  */
+/* ------------------------------------------------------------------ */
+
+// 大多数时候大家不会去消息上找 💬，而是直接点输入栏左下角菜单里的「重新生成」。
+// 这里在捕获阶段把这次点击截下来，换成意见面板；面板里的「直接重生成」再程序化
+// 触发原来的菜单项，所以老习惯不会丢。
+//
+// 只拦 isTrusted 的真实点击：酒馆里不少地方自己会 `$('#option_regenerate').trigger('click')`
+// （比如 RossAscends 的自动继续），那些合成事件必须原样放行，否则会莫名弹面板。
+// 我们自己触发时还会额外置 state.regenBypass，双保险。
+function shouldInterceptRegen(event) {
+    if (!state.settings.enabled || !state.settings.openOnRegenerate) return false;
+    if (!event || state.regenBypass) return false;
+    const target = event.target instanceof Element ? event.target.closest('#option_regenerate') : null;
+    if (!target) return false;
+    // state.allowSyntheticIntercept 只给测试台用，让它能验证整条拦截链路。
+    return event.isTrusted === true || state.allowSyntheticIntercept === true;
+}
+
+function hideOptionsMenu() {
+    try {
+        if (typeof $ === 'function') {
+            $('#options').hide();
+            return;
+        }
+    } catch (err) {
+        console.warn('[regen-feedback] 收起选项菜单失败', err);
+    }
+    const menu = document.getElementById('options');
+    if (menu) menu.style.display = 'none';
+}
+
+function onDocumentClickCapture(event) {
+    if (!shouldInterceptRegen(event)) return;
+    // 把 ST 绑在菜单项上的生成逻辑整段拦掉，改成先问意见。
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    hideOptionsMenu();
+    openPanel('regenerate');
+}
+
+function installRegenHook() {
+    if (state.regenHookInstalled) return;
+    state.regenHookInstalled = true;
+    document.addEventListener('click', onDocumentClickCapture, true);
+}
+
+/* ------------------------------------------------------------------ */
 /* 设置面板                                                            */
 /* ------------------------------------------------------------------ */
 
@@ -361,6 +424,7 @@ const SETTINGS_ROWS = [
     ['showButton', '在最后一条回复上显示按钮'],
     ['showQuickReplies', '显示 QR 助手的快速回复'],
     ['clearAfterSend', '生成后清空意见'],
+    ['openOnRegenerate', '点「重新生成」时弹出面板'],
 ];
 
 function buildSettingsUi() {
@@ -464,6 +528,7 @@ function init() {
     buildPanel();
     buildSettingsUi();
     bindEvents();
+    installRegenHook();
     refreshButton();
     setTimeout(refreshButton, 300);
     setTimeout(refreshButton, 1200);
@@ -476,6 +541,7 @@ function init() {
         openPanel,
         collectQuickReplies,
         triggerRegenerate,
+        shouldInterceptRegen,
         save: saveSettings,
     };
 }
