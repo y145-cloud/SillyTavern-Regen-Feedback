@@ -1,0 +1,233 @@
+/* 重生成意见 (Regen Feedback) */
+
+body.srf-open {
+    overflow: hidden;
+}
+
+.srf-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 4000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+}
+
+.srf-overlay[hidden] {
+    display: none !important;
+}
+
+.srf-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(2px);
+}
+
+.srf-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: min(560px, calc(100vw - 24px));
+    max-height: calc(100dvh - 64px);
+    border-radius: 14px;
+    border: 1px solid var(--SmartThemeBorderColor, rgba(255, 255, 255, 0.16));
+    background: var(--SmartThemeBlurTintColor, #1c1c20);
+    color: var(--SmartThemeBodyColor, #eee);
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+    overflow: hidden;
+}
+
+.srf-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--SmartThemeBorderColor, rgba(255, 255, 255, 0.12));
+}
+
+.srf-title {
+    font-weight: 600;
+    font-size: 1.02em;
+}
+
+.srf-close {
+    border: 0;
+    background: transparent;
+    color: inherit;
+    opacity: 0.7;
+    font-size: 1em;
+    line-height: 1;
+    padding: 4px 6px;
+    cursor: pointer;
+    border-radius: 6px;
+}
+
+.srf-close:hover {
+    opacity: 1;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.srf-body {
+    padding: 12px 14px 4px;
+    overflow-y: auto;
+}
+
+.srf-hint {
+    font-size: 0.84em;
+    line-height: 1.5;
+    opacity: 0.72;
+    margin-bottom: 8px;
+}
+
+.srf-text {
+    width: 100%;
+    box-sizing: border-box;
+    resize: vertical;
+    min-height: 96px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--SmartThemeBorderColor, rgba(255, 255, 255, 0.16));
+    background: var(--SmartThemeBotMesBlurTintColor, rgba(255, 255, 255, 0.06));
+    color: inherit;
+    font: inherit;
+    line-height: 1.5;
+    outline: none;
+}
+
+.srf-text:focus {
+    border-color: var(--SmartThemeQuoteColor, #7aa2f7);
+}
+
+.srf-qr-wrap {
+    margin-top: 10px;
+}
+
+.srf-qr-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+    font-size: 0.82em;
+    opacity: 0.8;
+    margin-bottom: 6px;
+}
+
+.srf-qr-note {
+    opacity: 0.6;
+    font-size: 0.92em;
+}
+
+.srf-qr-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    max-height: 34vh;
+    overflow-y: auto;
+    padding-bottom: 4px;
+}
+
+.srf-qr-group-name {
+    flex: 0 0 100%;
+    font-size: 0.76em;
+    opacity: 0.55;
+    margin-top: 4px;
+}
+
+.srf-qr-chip {
+    border: 1px solid var(--SmartThemeBorderColor, rgba(255, 255, 255, 0.18));
+    background: rgba(255, 255, 255, 0.06);
+    color: inherit;
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-size: 0.85em;
+    line-height: 1.35;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.srf-qr-chip:hover {
+    background: rgba(255, 255, 255, 0.14);
+}
+
+.srf-qr-chip:active {
+    transform: scale(0.97);
+}
+
+.srf-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding: 10px 14px 14px;
+    border-top: 1px solid var(--SmartThemeBorderColor, rgba(255, 255, 255, 0.12));
+}
+
+.srf-opt {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85em;
+    opacity: 0.85;
+    cursor: pointer;
+}
+
+.srf-actions {
+    display: flex;
+    gap: 8px;
+    margin-left: auto;
+}
+
+.srf-btn {
+    min-height: 34px;
+}
+
+.srf-primary {
+    border-color: var(--SmartThemeQuoteColor, #7aa2f7);
+}
+
+.srf-settings-desc {
+    font-size: 0.85em;
+    opacity: 0.75;
+    line-height: 1.5;
+    margin-bottom: 8px;
+}
+
+.srf-settings-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 3px 0;
+    font-size: 0.9em;
+    cursor: pointer;
+}
+
+.srf-settings-actions {
+    margin-top: 8px;
+}
+
+@media (max-width: 600px) {
+    .srf-overlay {
+        align-items: flex-end;
+        padding: 0;
+    }
+
+    .srf-card {
+        width: 100%;
+        max-height: 86dvh;
+        border-radius: 16px 16px 0 0;
+        border-bottom: 0;
+    }
+
+    .srf-actions {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .srf-actions .srf-btn {
+        flex: 1;
+    }
+}

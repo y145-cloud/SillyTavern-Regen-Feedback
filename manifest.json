@@ -1,0 +1,11 @@
+{
+    "display_name": "重生成意见 (Regen Feedback)",
+    "loading_order": 91,
+    "requires": [],
+    "optional": [],
+    "js": "index.js",
+    "css": "style.css",
+    "author": "y145-cloud",
+    "version": "1.0.0",
+    "auto_update": false
+}
