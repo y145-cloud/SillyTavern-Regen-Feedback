@@ -76,6 +76,10 @@ SillyTavern / TauriTavern 扩展：**重新生成之前，先告诉 AI 上一轮
 
 ## 更新日志
 
+### 1.0.1
+
+- 修复加载失败：`script.js` 并不导出 `getContext`（它挂在 `globalThis.SillyTavern` 上），从 script.js 里 import 它会让整个模块报 `does not provide an export named 'getContext'`，表现为装好后扩展启用不了、点按钮没反应。改为运行时从 `globalThis.SillyTavern.getContext()` 取。
+
 ### 1.0.0
 
 - 初始版本：💬 按钮、意见面板、QR 快速回复插入、单聊 `quiet_prompt` / 群聊系统注入两条通道。

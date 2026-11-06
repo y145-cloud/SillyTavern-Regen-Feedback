@@ -12,7 +12,6 @@
 import {
     eventSource,
     event_types,
-    getContext,
     setExtensionPrompt,
     extension_prompt_types,
     extension_prompt_roles,
@@ -65,6 +64,12 @@ function saveSettings() {
 /* ------------------------------------------------------------------ */
 /* 小工具                                                              */
 /* ------------------------------------------------------------------ */
+
+// script.js 并不导出 getContext（它挂在 globalThis.SillyTavern 上），
+// 所以这里懒取一次，避免模块加载阶段就因缺少导出而整包失效。
+function getCtx() {
+    return globalThis.SillyTavern?.getContext?.() ?? null;
+}
 
 function toast(message) {
     // eslint-disable-next-line no-undef
@@ -302,8 +307,8 @@ function triggerRegenerate(feedback) {
         return;
     }
 
-    const ctx = getContext();
-    const isGroup = Boolean(ctx.groupId);
+    const ctx = getCtx();
+    const isGroup = Boolean(ctx?.groupId);
     const regenEl = document.getElementById('option_regenerate');
 
     const payload = feedback ? `【重生成要求】${feedback}` : '';
@@ -312,7 +317,7 @@ function triggerRegenerate(feedback) {
         if (regenEl) {
             $(regenEl).trigger('click');
         } else {
-            ctx.generate('regenerate');
+            ctx?.generate?.('regenerate');
         }
         return;
     }
@@ -325,7 +330,7 @@ function triggerRegenerate(feedback) {
         if (regenEl) {
             $(regenEl).trigger('click');
         } else {
-            ctx.generate('regenerate');
+            ctx?.generate?.('regenerate');
         }
         return;
     }
@@ -333,7 +338,7 @@ function triggerRegenerate(feedback) {
     if (regenEl) {
         $(regenEl).trigger('click', [{ additionalPrompt: payload }]);
     } else {
-        ctx.generate('regenerate', { quiet_prompt: payload, quietToLoud: true });
+        ctx?.generate?.('regenerate', { quiet_prompt: payload, quietToLoud: true });
     }
 }
 
